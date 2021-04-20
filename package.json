@@ -1,0 +1,37 @@
+{
+	"name": "animewizard",
+	"version": "1.0.0",
+	"description": "Allows interaction with anime streaming sites in unconventional ways. ",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"test": "mocha -r ts-node/register 'tests/**/*.ts'",
+		"prepublish": "tsc",
+		"dev": "npx ts-node ./src/proxy/app.ts",
+		"build": "npm test && tsc",
+		"start": "node dist/proxy/app.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JambDev/animewizard.git"
+	},
+	"author": "JambDev",
+	"license": "GPL-3.0",
+	"bugs": {
+		"url": "https://github.com/JambDev/animewizard/issues"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.2.16",
+		"@types/jsdom": "^16.2.10",
+		"@types/mocha": "^8.2.2",
+		"chai": "^4.3.4",
+		"mocha": "^8.3.2",
+		"ts-node": "^9.1.1",
+		"typescript": "^4.2.4"
+	},
+	"homepage": "https://github.com/JambDev/animewizard#readme",
+	"dependencies": {
+		"got": "^11.8.2",
+		"jsdom": "^16.5.3"
+	}
+}
