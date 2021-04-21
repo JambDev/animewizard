@@ -1,12 +1,12 @@
 {
 	"name": "animewizard",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Allows interaction with anime streaming sites in unconventional ways. ",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"test": "mocha -r ts-node/register 'tests/**/*.ts'",
-		"prepublish": "tsc",
+		"prepublishOnly": "tsc",
 		"dev": "npx ts-node ./src/proxy/app.ts",
 		"build": "npm test && tsc",
 		"start": "node dist/proxy/app.js"

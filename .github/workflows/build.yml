@@ -1,4 +1,4 @@
-name: test
+name: build
 
 on: [push, pull_request]
 
@@ -14,4 +14,4 @@ jobs:
       with:
         node-version: '15.x'
     - run: npm ci
-    - run: npm build
+    - run: npm run build
