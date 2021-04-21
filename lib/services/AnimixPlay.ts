@@ -1,5 +1,5 @@
 import got from "got/dist/source";
-import AnimeService, { Anime, AnimeEpisode, UnresolvedAnime } from "./AnimeService";
+import AnimeService, { Anime, AnimeEpisode, UnresolvedAnime } from "./animeservice";
 import { JSDOM } from "jsdom";
 import Request from "got/dist/source/core";
 type AnimixAPISearchResponse = { result: string };
