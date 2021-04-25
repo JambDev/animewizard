@@ -4,7 +4,9 @@ import * as fs from "fs";
 import * as path from "path";
 import { AnimixAnime, AnimixUnresolvedAnime } from "../lib/services/AnimixPlay";
 
-describe("AnimixPlay test", () => {
+describe("AnimixPlay test", function() {
+	this.timeout(10000);
+
 	const animixPlay = new AnimixPlay();
 	let unresolvedAnimes: AnimixUnresolvedAnime[];
 	it("test episode name", async () => {
@@ -30,5 +32,5 @@ describe("AnimixPlay test", () => {
 			const file = path.join(__dirname, `out/${anime.episodes[0].name}.mp4`);
 			stream.pipe(fs.createWriteStream(file)).on("finish", done);
 		})
-	}).timeout(1 * 60 * 1000);
+	}).timeout(2 * 60 * 1000);
 })
