@@ -7,6 +7,14 @@ import { AnimixAnime, AnimixUnresolvedAnime } from "../lib/services/AnimixPlay";
 describe("AnimixPlay test", () => {
 	const animixPlay = new AnimixPlay();
 	let unresolvedAnimes: AnimixUnresolvedAnime[];
+	it("test episode name", async () => {
+		let unres_rezero = await animixPlay.search("re:zero");
+		let rezero = await animixPlay.resolve(unres_rezero[1]);
+		for(let ep of rezero.episodes) {
+			expect(ep.name).to.not.include("typesub=");
+			expect(ep.name).to.not.include("//");
+		}
+	});
 	it("searching for Jujutsu Kaisen", async () => {
 		unresolvedAnimes = await animixPlay.search("Jujutsu Kaisen");
 		// dub, sub, and for some reason dr. stone

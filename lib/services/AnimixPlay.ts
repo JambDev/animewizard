@@ -49,9 +49,14 @@ export default class AnimixPlay extends AnimeService {
 		for (let epNumber in eps) {
 			if (epNumber === "eptotal") continue;
 			let epContent = eps[epNumber];
+			let epName = decodeURIComponent(epContent.slice(epContent.indexOf("title=") + "title=".length).replace(/\+/g, '%20'));
+			if(epName.startsWith("//"))
+				continue;
+			if (epName.includes("&typesub="))
+				epName = epName.slice(0, -"&typesub=DUB".length);
 			episodes.push({
 				episodeNumber: parseInt(epNumber),
-				name: decodeURIComponent(epContent.slice(epContent.indexOf("title=") + "title=".length).replace(/\+/g, '%20')),
+				name: epName,
 				url: epContent,
 			});
 		}
@@ -70,10 +75,10 @@ export default class AnimixPlay extends AnimeService {
 		let targetURL: string | null = null;
 		for (let scriptElem of document.querySelectorAll("script")) {
 			let script = scriptElem.innerHTML.trim();
-			if(!script.startsWith("var video=")) continue;
+			if (!script.startsWith("var video=")) continue;
 			targetURL = script.slice(script.indexOf("video=") + "video=".length + 1, script.indexOf(`",`));
 		}
-		if(!targetURL)
+		if (!targetURL)
 			throw "failed to retrieve video url";
 		return got.stream(targetURL);
 	}
