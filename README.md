@@ -18,5 +18,5 @@ const animixPlay = new AnimixPlay();
     let stream = await animixPlay.download(anime.episodes[0]);
     const fs = require("fs");
     stream.pipe(fs.createWriteStream(anime.episodes[0].name + ".mp4"));
-})
+})();
 ```
