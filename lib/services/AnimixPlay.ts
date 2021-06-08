@@ -4,6 +4,14 @@ import { JSDOM } from "jsdom";
 import Request from "got/dist/source/core";
 type AnimixAPISearchResponse = { result: string };
 type AnimixEpisodeList = { [episodeNumber: string]: string } & { eptotal: number };
+interface AnimixVideoConfig { [key: string]: string | undefined, video: string, backup: string, useiframe: string, iframesrc: string, error: string, useajax: string };
+interface StreamAniResponse {
+	advertising: any[],
+	linkiframe: string,
+	source: [{ file: string, label: string, type: string }],
+	source_bk: [{ file: string, label: string, type: string }],
+	track: any[]
+}
 
 export interface AnimixUnresolvedAnime extends UnresolvedAnime {
 	url: string;
@@ -50,7 +58,7 @@ export default class AnimixPlay extends AnimeService {
 			if (epNumber === "eptotal") continue;
 			let epContent = eps[epNumber];
 			let epName = decodeURIComponent(epContent.slice(epContent.indexOf("title=") + "title=".length).replace(/\+/g, '%20'));
-			if(epName.startsWith("//"))
+			if (epName.startsWith("//"))
 				continue;
 			if (epName.includes("&typesub="))
 				epName = epName.slice(0, -"&typesub=DUB".length);
@@ -76,7 +84,39 @@ export default class AnimixPlay extends AnimeService {
 		for (let scriptElem of document.querySelectorAll("script")) {
 			let script = scriptElem.innerHTML.trim();
 			if (!script.startsWith("var video=")) continue;
-			targetURL = script.slice(script.indexOf("video=") + "video=".length + 1, script.indexOf(`",`));
+			// honestly i'm horrible with regex but im proud of this
+			let VarPattern = /\w+="([^"]?)+"/g;
+			let varStrs = script.match(VarPattern);
+			if (!varStrs) continue;
+			let variables: AnimixVideoConfig = {} as AnimixVideoConfig;
+			for (let varStr of varStrs) {
+				variables[varStr.slice(0, varStr.indexOf("="))] = JSON.parse(varStr.slice(varStr.indexOf("=") + 1));
+			}
+			if (variables.video.length !== 0)
+				targetURL = variables.video;
+			else if (variables.iframesrc.length !== 0) {
+				// https://streamani.net/ajax.php?id=VIDEO_ID&refer=none
+				let name = variables.iframesrc;
+				let isolatedID = name.substr(0, name.indexOf("&"));
+				let ajaxRes = await got("https://streamani.net/ajax.php?id=" + isolatedID);
+				let objRes: StreamAniResponse = JSON.parse(ajaxRes.body);
+				let checkSources = async (useBak = false) => {
+					for (let source of useBak?objRes.source:objRes.source_bk) {
+						// check if its valid by sending a HEAD request
+						let headReq = await got(source.file, {
+							method: "HEAD",
+							followRedirect: true,
+						});
+						if(headReq.statusCode === 200) {
+							targetURL = source.file;
+							break;
+						}
+					}
+				};
+				await checkSources(false);
+				if (!targetURL) await checkSources(true);
+			}
+			// TODO: "backup" property
 		}
 		if (!targetURL)
 			throw "failed to retrieve video url";

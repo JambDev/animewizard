@@ -5,7 +5,6 @@ import * as path from "path";
 import { AnimixAnime, AnimixUnresolvedAnime } from "../lib/services/AnimixPlay";
 
 describe("AnimixPlay test", function() {
-	this.timeout(10000);
 
 	const animixPlay = new AnimixPlay();
 	let unresolvedAnimes: AnimixUnresolvedAnime[];
@@ -19,8 +18,8 @@ describe("AnimixPlay test", function() {
 	});
 	it("searching for Jujutsu Kaisen", async () => {
 		unresolvedAnimes = await animixPlay.search("Jujutsu Kaisen");
-		// dub, sub, and for some reason dr. stone
-		expect(unresolvedAnimes).to.have.lengthOf(3);
+		// dub & sub
+		expect(unresolvedAnimes).to.have.lengthOf(2);
 	});
 	let anime: AnimixAnime;
 	it("get episodes of Jujutsu Kaisen", async () => {
